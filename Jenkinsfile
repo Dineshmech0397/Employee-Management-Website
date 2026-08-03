@@ -1,28 +1,72 @@
 pipeline {
+
     agent any
 
     stages {
 
-        stage('Build Docker Images') {
+        stage('Checkout Code') {
             steps {
-                sh 'docker compose build'
+                echo 'Checking out source code from GitHub'
             }
         }
+
+
+        stage('Build Docker Images') {
+            steps {
+                echo 'Building Docker images...'
+
+                sh '''
+                docker compose build
+                '''
+            }
+        }
+
+
+        stage('Stop Existing Containers') {
+            steps {
+                echo 'Stopping existing containers...'
+
+                sh '''
+                docker compose down
+                '''
+            }
+        }
+
 
         stage('Deploy Application') {
             steps {
-                sh 'docker compose up -d'
+                echo 'Starting application containers...'
+
+                sh '''
+                docker compose up -d
+                '''
+            }
+        }
+
+
+        stage('Verify Deployment') {
+            steps {
+                echo 'Checking running containers...'
+
+                sh '''
+                docker ps
+                '''
             }
         }
 
     }
 
+
     post {
+
         success {
-            echo 'Deployment Successful!'
+            echo 'Deployment Successful! Application is running.'
         }
+
         failure {
-            echo 'Deployment Failed!'
+            echo 'Deployment Failed! Check console logs.'
         }
+
     }
+
 }
