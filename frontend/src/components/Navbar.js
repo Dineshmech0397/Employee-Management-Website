@@ -12,7 +12,7 @@ function Navbar() {
         alignItems: "center",
       }}
     >
-      <h2>Employee Management System</h2>
+      <h2>Employee Management System - CI/CD Test</h2>
 
       <div>
         <strong>DevOps Three-Tier Project</strong>
