@@ -6,10 +6,19 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                echo 'Checking out source code from GitHub'
+                echo 'Checking out source code from GitHub...'
             }
         }
 
+        stage('Stop Existing Containers') {
+            steps {
+                echo 'Stopping existing containers...'
+
+                sh '''
+                docker compose down || true
+                '''
+            }
+        }
 
         stage('Build Docker Images') {
             steps {
@@ -21,18 +30,6 @@ pipeline {
             }
         }
 
-
-        stage('Stop Existing Containers') {
-            steps {
-                echo 'Stopping existing containers...'
-
-                sh '''
-                docker compose down
-                '''
-            }
-        }
-
-
         stage('Deploy Application') {
             steps {
                 echo 'Starting application containers...'
@@ -43,19 +40,18 @@ pipeline {
             }
         }
 
-
         stage('Verify Deployment') {
             steps {
                 echo 'Checking running containers...'
 
                 sh '''
                 docker ps
+                curl http://localhost:5000 || true
                 '''
             }
         }
 
     }
-
 
     post {
 
@@ -65,6 +61,10 @@ pipeline {
 
         failure {
             echo 'Deployment Failed! Check console logs.'
+        }
+
+        always {
+            echo 'Pipeline execution completed.'
         }
 
     }

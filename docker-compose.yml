@@ -1,7 +1,6 @@
 services:
   mysql:
     image: mysql:8.0
-    container_name: mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: password123
@@ -14,7 +13,6 @@ services:
 
   backend:
     build: ./backend
-    container_name: backend
     restart: always
     ports:
       - "5000:5000"
@@ -28,7 +26,6 @@ services:
 
   frontend:
     build: ./frontend
-    container_name: frontend
     restart: always
     ports:
       - "80:80"
