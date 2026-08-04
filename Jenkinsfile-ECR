@@ -7,6 +7,10 @@ pipeline {
 
         BACKEND_REPO = 'employee-management-backend'
         FRONTEND_REPO = 'employee-management-frontend'
+
+        ECS_CLUSTER = 'employee-management-cluster'
+        BACKEND_SERVICE = 'backend-service'
+        FRONTEND_SERVICE = 'frontend-service'
     }
 
     stages {
@@ -74,15 +78,42 @@ pipeline {
                 '''
             }
         }
+
+        stage('Deploy to Amazon ECS') {
+            steps {
+                sh '''
+                echo "Deploying Backend..."
+                aws ecs update-service \
+                  --cluster $ECS_CLUSTER \
+                  --service $BACKEND_SERVICE \
+                  --force-new-deployment
+
+                echo "Deploying Frontend..."
+                aws ecs update-service \
+                  --cluster $ECS_CLUSTER \
+                  --service $FRONTEND_SERVICE \
+                  --force-new-deployment
+                '''
+            }
+        }
+
     }
 
     post {
         success {
-            echo '✅ Backend and Frontend images successfully pushed to Amazon ECR!'
+            echo '======================================='
+            echo '✅ CI/CD Pipeline Completed Successfully'
+            echo '✅ Docker Images Built'
+            echo '✅ Images Pushed to Amazon ECR'
+            echo '✅ ECS Services Updated'
+            echo '======================================='
         }
 
         failure {
-            echo '❌ Pipeline failed. Check the Jenkins console output.'
+            echo '======================================='
+            echo '❌ Pipeline Failed'
+            echo 'Please check the Jenkins Console Output.'
+            echo '======================================='
         }
     }
 }
