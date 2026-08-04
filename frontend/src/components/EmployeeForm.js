@@ -5,7 +5,7 @@ function EmployeeForm({
   setSelectedEmployee,
   refreshTable,
 }) {
-  const API_URL = "http://100.31.3.36:5000/employees";
+  const API_URL = "http://3.80.96.3:5000/employees";
 
   const [employeeId, setEmployeeId] = useState("");
   const [fullName, setFullName] = useState("");

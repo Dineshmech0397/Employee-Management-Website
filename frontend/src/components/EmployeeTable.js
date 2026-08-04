@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 function EmployeeTable({ refresh, setSelectedEmployee }) {
-  const API_URL = "http://100.31.3.36:5000/employees";
+  const API_URL = "http://3.80.96.3:5000/employees";
 
   const [employees, setEmployees] = useState([]);
 
