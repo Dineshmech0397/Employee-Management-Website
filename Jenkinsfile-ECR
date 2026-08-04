@@ -5,8 +5,8 @@ pipeline {
         AWS_REGION = 'us-east-1'
         AWS_ACCOUNT_ID = '198023436378'
 
-        BACKEND_REPO = 'contact-book-backend'
-        FRONTEND_REPO = 'contact-book-frontend'
+        BACKEND_REPO = 'employee-management-backend'
+        FRONTEND_REPO = 'employee-management-frontend'
     }
 
     stages {
@@ -19,26 +19,20 @@ pipeline {
 
         stage('Login to Amazon ECR') {
             steps {
-                withCredentials([[
-                    $class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'aws-creds'
-                ]]) {
-
-                    sh '''
-                    aws ecr get-login-password --region $AWS_REGION | \
-                    docker login \
-                    --username AWS \
-                    --password-stdin \
-                    $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-                    '''
-                }
+                sh '''
+                aws ecr get-login-password --region $AWS_REGION | \
+                docker login \
+                --username AWS \
+                --password-stdin \
+                $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+                '''
             }
         }
 
         stage('Build Backend Image') {
             steps {
                 sh '''
-                docker build -t $BACKEND_REPO ./backend
+                docker build -t $BACKEND_REPO:latest ./backend
                 '''
             }
         }
@@ -46,7 +40,7 @@ pipeline {
         stage('Build Frontend Image') {
             steps {
                 sh '''
-                docker build -t $FRONTEND_REPO ./frontend
+                docker build -t $FRONTEND_REPO:latest ./frontend
                 '''
             }
         }
@@ -63,7 +57,7 @@ pipeline {
             }
         }
 
-        stage('Push Backend') {
+        stage('Push Backend Image') {
             steps {
                 sh '''
                 docker push \
@@ -72,7 +66,7 @@ pipeline {
             }
         }
 
-        stage('Push Frontend') {
+        stage('Push Frontend Image') {
             steps {
                 sh '''
                 docker push \
@@ -80,16 +74,15 @@ pipeline {
                 '''
             }
         }
-
     }
 
     post {
         success {
-            echo 'Images Successfully Pushed to Amazon ECR 🚀'
+            echo '✅ Backend and Frontend images successfully pushed to Amazon ECR!'
         }
 
         failure {
-            echo 'Pipeline Failed'
+            echo '❌ Pipeline failed. Check the Jenkins console output.'
         }
     }
 }
