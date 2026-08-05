@@ -5,7 +5,7 @@ function EmployeeForm({
   setSelectedEmployee,
   refreshTable,
 }) {
-  const API_URL = "http://13.222.226.2:5000/employees";
+  const API_URL = "http://employee-backend-alb-588522014.us-east-1.elb.amazonaws.com/employees";
 
   const [employeeId, setEmployeeId] = useState("");
   const [fullName, setFullName] = useState("");
