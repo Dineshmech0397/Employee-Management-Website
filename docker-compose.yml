@@ -1,0 +1,57 @@
+version: '3.8'
+
+networks:
+  3tier-network:
+    driver: bridge
+
+volumes:
+  db_volume:
+
+services:
+  # 1. Database Layer
+  database:
+    build: ./database
+    container_name: emp-database
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: employee_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_volume:/var/lib/mysql
+    networks:
+      - 3tier-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. Backend Layer
+  backend:
+    build: ./backend
+    container_name: emp-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=emp-database
+      - DB_PORT=3306
+      - DB_NAME=employee_db
+      - DB_USER=root
+      - DB_PASSWORD=password
+    networks:
+      - 3tier-network
+    depends_on:
+      database:
+        condition: service_healthy
+
+  # 3. Frontend Layer
+  frontend:
+    build: ./frontend
+    container_name: emp-frontend
+    ports:
+      - "80:80"
+    networks:
+      - 3tier-network
+    depends_on:
+      - backend
