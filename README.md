@@ -1,4 +1,4 @@
-# 🏢 Employee Management System
+# 🏢 Employee Management System - 3 Tier Application
 ### A Production-Grade Three-Tier DevOps & CI/CD Pipeline Architecture
 
 ---
