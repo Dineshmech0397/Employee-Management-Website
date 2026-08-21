@@ -5,8 +5,8 @@ function EmployeeForm({
   setSelectedEmployee,
   refreshTable,
 }) {
-  // Add /api prefix here
-  const API_URL = "/api/employees";
+  // Use a relative path so Nginx proxies it to the backend container correctly
+  const API_URL = "/employees";
 
   const [employeeId, setEmployeeId] = useState("");
   const [fullName, setFullName] = useState("");
@@ -74,7 +74,6 @@ function EmployeeForm({
       body: JSON.stringify(employee),
     })
       .then((res) => {
-        // Safe check to ensure the response is actually JSON before parsing
         if (!res.ok) {
           throw new Error(`Server returned status ${res.status}`);
         }
