@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from "react";
 
 function EmployeeTable({ refresh, setSelectedEmployee }) {
-  const API_URL = "http://employee-backend-alb-588522014.us-east-1.elb.amazonaws.com/employees";
+  // Use a relative path so requests route properly through your local proxy
+  const API_URL = "/employees";
 
   const [employees, setEmployees] = useState([]);
 
   const loadEmployees = () => {
     fetch(API_URL)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Server returned status ${res.status}`);
+        }
+        return res.json();
+      })
       .then((data) => setEmployees(data))
-      .catch((err) => console.log(err));
+      .catch((err) => console.error("Fetch Error:", err));
   };
 
   useEffect(() => {
@@ -22,10 +28,16 @@ function EmployeeTable({ refresh, setSelectedEmployee }) {
     fetch(`${API_URL}/${id}`, {
       method: "DELETE",
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Server returned status ${res.status}`);
+        }
+        return res.json();
+      })
       .then(() => {
         loadEmployees();
-      });
+      })
+      .catch((err) => console.error("Delete Error:", err));
   };
 
   return (
@@ -72,7 +84,9 @@ function EmployeeTable({ refresh, setSelectedEmployee }) {
               <td style={tdStyle}>{emp.designation}</td>
               <td style={tdStyle}>₹{emp.salary}</td>
               <td style={tdStyle}>
-                {new Date(emp.joining_date).toLocaleDateString()}
+                {emp.joining_date
+                  ? new Date(emp.joining_date).toLocaleDateString()
+                  : ""}
               </td>
 
               <td style={tdStyle}>
