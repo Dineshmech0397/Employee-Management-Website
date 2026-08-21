@@ -77,52 +77,34 @@ Employee-Management-Website/
 ├── Jenkinsfile                # Declarative pipeline script for CI/CD automation
 ├── docker-compose.yml         # Multi-container orchestration & networking configuration
 └── README.md                  # Comprehensive project documentation
+
 5. ⚙️ Core Technical Components
+
 A. Frontend & Nginx Reverse-Proxy Integration
 To eliminate the vulnerability of hardcoding volatile EC2 public IP addresses (which change upon instance reboots), the frontend uses relative paths (/employees).
 
-default.conf Configuration: Intercepts traffic destined for /employees at the Nginx layer and proxies it internally across Docker’s bridge network (3tier-network) directly to http://emp-backend:5000/employees.
-
-Resilience: Even if the cloud server public IP changes, the internal routing remains uninterrupted.
+* **default.conf Configuration:** Intercepts traffic destined for /employees at the Nginx layer and proxies it internally across Docker’s bridge network (3tier-network) directly to http://emp-backend:5000/employees.
+* **Resilience:** Even if the cloud server public IP changes, the internal routing remains uninterrupted.
 
 B. Backend REST API & Database Connectivity
-Built with Flask and served via a production Gunicorn WSGI application server.
-
-Communicates with MySQL using PyMySQL, complete with automatic exception handling and full Cross-Origin Resource Sharing (Flask-CORS) support.
+* Built with Flask and served via a production Gunicorn WSGI application server.
+* Communicates with MySQL using PyMySQL, complete with automatic exception handling and full Cross-Origin Resource Sharing (Flask-CORS) support.
 
 C. Persistent Relational Database
-Initialized via automated SQL migration scripts (init.sql) stored in the /database directory.
+* Initialized via automated SQL migration scripts (init.sql) stored in the /database directory.
+* Leverages named Docker volumes (db_volume) to ensure data integrity and persistence across container restarts.
 
-Leverages named Docker volumes (db_volume) to ensure data integrity and persistence across container restarts.
+---
 
 🚀 6. Step-by-Step Deployment Guide
-Prerequisites
+
+**Prerequisites**
 Docker and Docker Compose installed on your host machine or target EC2 instance.
 
-Step 1: Clone the Repository
-Bash
+**Step 1: Clone the Repository**
+```bash
 git clone [https://github.com/Dineshmech0397/Employee-Management-Website.git](https://github.com/Dineshmech0397/Employee-Management-Website.git)
 cd Employee-Management-Website
-Step 2: Build and Launch the Stack
-Execute Docker Compose in detached mode with forced builds to instantiate the three tiers:
-
-Bash
-docker-compose up --build -d
-Step 3: Validate Container Status
-Verify that all containers are healthy and running:
-
-Bash
-docker ps
-Expected Active Containers:
-
-emp-frontend (Port 80 mapped to host)
-
-emp-backend (Port 5000 mapped to host)
-
-emp-database (Port 3306 isolated internal network)
-
-🔍 7. Database Management & Verification
-To inspect, query, or verify saved employee records directly inside the MySQL database container without leaving your terminal, run:
-
-Bash
-docker exec -it emp-database mysql -u root -p
+Step 2: Build and Launch the StackExecute Docker Compose in detached mode with forced builds to instantiate the three tiers:Bashdocker-compose up --build -d
+Step 3: Validate Container StatusVerify that all containers are healthy and running:Bashdocker ps
+Expected Active Containers:emp-frontend (Port 80 mapped to host)emp-backend (Port 5000 mapped to host)emp-database (Port 3306 isolated internal network)🔍 7. Database Management & VerificationTo inspect, query, or verify saved employee records directly inside the MySQL database container without leaving your terminal, run:Bashdocker exec -it emp-database mysql -u root -p
