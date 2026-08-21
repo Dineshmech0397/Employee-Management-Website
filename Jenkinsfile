@@ -2,27 +2,29 @@ pipeline {
     agent any
 
     stages {
-        stage('Deploy to AWS EC2') {
+        stage('Checkout Code') {
+            steps {
+                // Automatically clones your GitHub repository into the workspace
+                git branch: 'main', url: 'https://github.com/Dineshmech0397/Employee-Management-Website.git'
+            }
+        }
+        stage('Deploy Containers') {
             steps {
                 sh '''
-                    # 1. Pull latest code
-                    cd ~/Employee-Management-Website
-                    git pull origin main
-
-                    # 2. Ensure network and Persistent Volume exist
+                    # 1. Ensure network and Persistent Volume exist
                     docker network create 3tier-network || true
                     docker volume create db_volume || true
 
-                    # 3. Build Fresh Docker Images
+                    # 2. Build Fresh Docker Images from workspace files
                     docker build -t frontend:emp-app ./frontend
                     docker build -t backend:emp-app ./backend
                     docker build -t database:emp-app ./database
 
-                    # 4. Stop and remove old containers (Data is safe in the volume!)
+                    # 3. Stop and remove old containers (Data is safe in the volume!)
                     docker stop emp-frontend emp-backend emp-database || true
                     docker rm emp-frontend emp-backend emp-database || true
 
-                    # 5. Run Database Container WITH VOLUME MOUNT
+                    # 4. Run Database Container WITH VOLUME MOUNT
                     docker run -d --name emp-database \
                         --network 3tier-network \
                         -v db_volume:/var/lib/mysql \
@@ -31,7 +33,7 @@ pipeline {
                         -p 3306:3306 \
                         database:emp-app
 
-                    # 6. Run Backend Container
+                    # 5. Run Backend Container
                     docker run -d --name emp-backend \
                         --network 3tier-network \
                         -e DB_HOST=emp-database \
@@ -42,7 +44,7 @@ pipeline {
                         -p 5000:5000 \
                         backend:emp-app
 
-                    # 7. Run Frontend Container
+                    # 6. Run Frontend Container
                     docker run -d --name emp-frontend \
                         --network 3tier-network \
                         -p 80:80 \
