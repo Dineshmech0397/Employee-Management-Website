@@ -6,7 +6,7 @@ function EmployeeForm({
   refreshTable,
 }) {
   // Use a relative path so Nginx proxies it to the backend container correctly
-  const API_URL = "http://100.59.36.55:5000/employees";
+  const API_URL = "/employees";
 
   const [employeeId, setEmployeeId] = useState("");
   const [fullName, setFullName] = useState("");
