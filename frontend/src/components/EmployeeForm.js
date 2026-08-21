@@ -5,7 +5,8 @@ function EmployeeForm({
   setSelectedEmployee,
   refreshTable,
 }) {
-  const API_URL = "/employees";
+  // Add /api prefix here
+  const API_URL = "/api/employees";
 
   const [employeeId, setEmployeeId] = useState("");
   const [fullName, setFullName] = useState("");
@@ -72,12 +73,18 @@ function EmployeeForm({
       },
       body: JSON.stringify(employee),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        // Safe check to ensure the response is actually JSON before parsing
+        if (!res.ok) {
+          throw new Error(`Server returned status ${res.status}`);
+        }
+        return res.json();
+      })
       .then(() => {
         clearForm();
         refreshTable();
       })
-      .catch(console.error);
+      .catch((err) => console.error("API Error:", err));
   };
 
   return (
