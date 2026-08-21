@@ -13,7 +13,7 @@
 7. [Step-by-Step Deployment Guide](#-step-by-step-deployment-guide)
 8. [Database Management & Verification](#-database-management--verification)
 
-----
+--------
 
 ## 1. 📌 Project Overview
 The **Employee Management System** is a cloud-native, fully containerized web application designed to demonstrate a robust, real-world **DevOps lifecycle**. It allows organizations to seamlessly track employee records (such as Employee ID, Full Name, Department, Designation, Salary, and Joining Date) through an interactive web interface backed by a resilient relational database, automated reverse-proxy routing, and continuous integration/continuous deployment (CI/CD).
