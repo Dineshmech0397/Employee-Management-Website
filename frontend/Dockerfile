@@ -10,7 +10,10 @@ RUN npm run build
 FROM nginx:alpine
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Copy the custom Nginx proxy config into container
+# REMOVE default Nginx configuration file so it doesn't conflict
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Copy your custom Nginx proxy config into container
 COPY default.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
