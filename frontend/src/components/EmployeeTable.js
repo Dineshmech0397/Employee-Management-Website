@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 function EmployeeTable({ refresh, setSelectedEmployee }) {
   // Point directly to your backend endpoint with port 5000
-  const API_URL = "http://100.59.36.55:5000/employees";
+  const API_URL = "/employees";
 
   const [employees, setEmployees] = useState([]);
 
